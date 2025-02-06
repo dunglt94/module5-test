@@ -59,6 +59,14 @@
       "boughtDate": "2025-02-03",
       "quantity": "11",
       "id": 5
+    },
+    {
+      "total": 1100,
+      "code": "222",
+      "product_id": 1,
+      "boughtDate": "2025-02-06",
+      "quantity": "11",
+      "id": 6
     }
   ]
 }

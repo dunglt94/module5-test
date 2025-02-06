@@ -6,17 +6,19 @@ import {Link} from "react-router-dom";
 const Book = () => {
     const [orders, setOrders] = useState([]);
     const [products, setProducts] = useState([]);
-    const [startDate, setStartDate] = useState(""); // Ngày bắt đầu
-    const [endDate, setEndDate] = useState(""); // Ngày kết thúc
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
 
     useEffect(() => {
-        axios
-            .get(PRODUCT_API_URL)
-            .then((response) => {
-                setProducts(response.data)
-                console.log(response.data)
-            })
-            .catch((error) => console.error(error));
+        const fetchProducts = async () => {
+            try {
+                const response = await axios.get(PRODUCT_API_URL);
+                setProducts(response.data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+        fetchProducts().then();
     }, []);
 
     const getProductById = (id) => {
@@ -24,13 +26,15 @@ const Book = () => {
     };
 
     useEffect(() => {
-        axios
-            .get(ORDER_API_URL)
-            .then((response) => {
-                setOrders(response.data)
-                console.log(response.data)
-            })
-            .catch((error) => console.error(error));
+        const fetchOrders = async () => {
+            try {
+                const response = await axios.get(ORDER_API_URL);
+                setOrders(response.data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+        fetchOrders().then();
     }, []);
 
     const sortedOrders = [...orders].sort((a, b) => {
@@ -107,9 +111,9 @@ const Book = () => {
                         <tr key={order.id}>
                             <td>{index + 1}</td>
                             <td>{order.code}</td>
-                            <td>{product.name}</td>
-                            <td>{product.price}</td>
-                            <td>{product.type}</td>
+                            <td>{product?.name || "N/A"}</td>
+                            <td>{product?.price || "N/A"}</td>
+                            <td>{product?.type || "N/A"}</td>
                             <td>{formatDate(order.boughtDate)}</td>
                             <td>{order.quantity}</td>
                             <td>{order.total}</td>

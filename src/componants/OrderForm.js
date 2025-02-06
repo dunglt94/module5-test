@@ -76,14 +76,15 @@ const OrderForm = () => {
 
 
     const handleSubmit = () => {
-        axios
-            .post(ORDER_API_URL, order)
-            .then((res) => {
-                alert(`Order "${res.data.code}" added successfully! Status ${res.status}!`);
-                console.log(res.data)
-                navigate("/");
-            })
-            .catch((error) => console.error(error));
+        const fetchProducts = async () => {
+            try {
+                const response = await axios.get(ORDER_API_URL);
+                setProducts(response.data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+        fetchProducts().then();
     };
 
     return (
