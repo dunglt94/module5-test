@@ -1,19 +1,19 @@
 {
   "products": [
     {
-      "id": "1",
+      "id": 1,
       "name": "SP1",
       "price": 100,
       "type": "Type 1"
     },
     {
-      "id": "2",
+      "id": 2,
       "name": "SP2",
       "price": 200,
       "type": "Type 2"
     },
     {
-      "id": "3",
+      "id": 3,
       "name": "SP3",
       "price": 80,
       "type": "Type 3"
@@ -21,7 +21,7 @@
   ],
   "orders": [
     {
-      "id": "1",
+      "id": 1,
       "code": "200",
       "boughtDate": "06/02/2024",
       "total": 1000,
@@ -29,7 +29,7 @@
       "product_id": 1
     },
     {
-      "id": "2",
+      "id": 2,
       "code": "201",
       "boughtDate": "06/02/2024",
       "total": 1200,
@@ -37,7 +37,7 @@
       "product_id": 2
     },
     {
-      "id": "3",
+      "id": 3,
       "code": "202",
       "boughtDate": "06/02/2024",
       "total": 1600,
@@ -45,27 +45,12 @@
       "product_id": 3
     },
     {
-      "id": "e7af",
-      "code": "1",
-      "product_id": "1",
-      "boughtDate": "2025-02-06",
-      "quantity": 11
-    },
-    {
-      "id": "2224",
+      "total": 1100,
       "code": "222",
-      "product_id": "2",
+      "product_id": 1,
       "boughtDate": "2025-02-06",
-      "quantity": "10",
-      "total": 0
-    },
-    {
-      "id": "2a91",
-      "code": "232",
-      "product_id": "1",
-      "boughtDate": "2025-02-06",
-      "quantity": "112",
-      "total": 0
+      "quantity": "11",
+      "id": 4
     }
   ]
 }

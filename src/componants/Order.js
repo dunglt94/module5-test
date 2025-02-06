@@ -9,17 +9,7 @@ const Book = () => {
 
     useEffect(() => {
         axios
-            .get(`${ORDER_API_URL}`)
-            .then((response) => {
-                setOrders(response.data)
-                console.log(response.data)
-            })
-            .catch((error) => console.error(error));
-    }, []);
-
-    useEffect(() => {
-        axios
-            .get(`${PRODUCT_API_URL}?_sort=price&_order=desc`)
+            .get(PRODUCT_API_URL)
             .then((response) => {
                 setProducts(response.data)
                 console.log(response.data)
@@ -30,6 +20,20 @@ const Book = () => {
     const getProductById = (id) => {
         return products.find(product => product.id === id);
     };
+
+    useEffect(() => {
+        axios
+            .get(ORDER_API_URL)
+            .then((response) => {
+                setOrders(response.data)
+                console.log(response.data)
+            })
+            .catch((error) => console.error(error));
+    }, []);
+
+
+
+
 
     return (
         <div className="container mt-4">
@@ -57,8 +61,7 @@ const Book = () => {
                 </thead>
                 <tbody className="align-middle">
                 {orders.map((order, index) => {
-                    const product = getProductById(String(order.product_id));
-
+                    const product = getProductById(order.product_id);
                     return (
                     <tr key={order.id}>
                         <td>{index + 1}</td>
@@ -70,12 +73,12 @@ const Book = () => {
                         <td>{order.quantity}</td>
                         <td>{order.total}</td>
                         <td>
-                            {/*<Link*/}
-                            {/*    to={`/edit/${order.id}`}*/}
-                            {/*    className="btn btn-primary me-2 btn-action w-50"*/}
-                            {/*>*/}
-                            {/*    Sửa*/}
-                            {/*</Link>*/}
+                            <Link
+                                to={`/edit/${order.id}`}
+                                className="btn btn-primary me-2 btn-action w-50"
+                            >
+                                Sửa
+                            </Link>
                         </td>
                     </tr>
                 )})}
