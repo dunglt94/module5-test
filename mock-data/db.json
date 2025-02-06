@@ -23,7 +23,7 @@
     {
       "id": 1,
       "code": "200",
-      "boughtDate": "06/02/2024",
+      "boughtDate": "2025-02-06",
       "total": 1000,
       "quantity": 10,
       "product_id": 1
@@ -31,7 +31,7 @@
     {
       "id": 2,
       "code": "201",
-      "boughtDate": "06/02/2024",
+      "boughtDate": "2025-02-06",
       "total": 1200,
       "quantity": 6,
       "product_id": 2
@@ -39,7 +39,7 @@
     {
       "id": 3,
       "code": "202",
-      "boughtDate": "06/02/2024",
+      "boughtDate": "2025-02-06",
       "total": 1600,
       "quantity": 20,
       "product_id": 3
@@ -51,6 +51,14 @@
       "boughtDate": "2025-02-06",
       "quantity": "11",
       "id": 4
+    },
+    {
+      "total": 880,
+      "code": "204",
+      "product_id": 3,
+      "boughtDate": "2025-02-03",
+      "quantity": "11",
+      "id": 5
     }
   ]
 }

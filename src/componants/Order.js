@@ -6,6 +6,8 @@ import {Link} from "react-router-dom";
 const Book = () => {
     const [orders, setOrders] = useState([]);
     const [products, setProducts] = useState([]);
+    const [startDate, setStartDate] = useState(""); // Ngày bắt đầu
+    const [endDate, setEndDate] = useState(""); // Ngày kết thúc
 
     useEffect(() => {
         axios
@@ -31,9 +33,31 @@ const Book = () => {
             .catch((error) => console.error(error));
     }, []);
 
+    const sortedOrders = [...orders].sort((a, b) => {
+        const productA = getProductById(a.product_id);
+        const productB = getProductById(b.product_id);
+        return (productA?.price || 0) - (productB?.price || 0);
+    });
 
+    const formatDate = (dateString) => {
+        return new Intl.DateTimeFormat("vi-VN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        }).format(new Date(dateString));
+    };
 
+    const filterOrdersByDate = () => {
+        const start = startDate ? new Date(startDate) : null;
+        const end = endDate ? new Date(endDate) : null;
 
+        const filtered = orders.filter(order => {
+            const orderDate = new Date(order.boughtDate);
+            return (!start || orderDate >= start) && (!end || orderDate <= end);
+        });
+
+        setOrders(filtered);
+    };
 
     return (
         <div className="container mt-4">
@@ -42,6 +66,23 @@ const Book = () => {
                 <Link to={`/add`} className="btn btn-success px-4">
                     Add a new Book
                 </Link>
+            </div>
+
+            <div className="mb-3 d-flex w-auto text-center">
+                <input
+                    type="date"
+                    className="form-control w-25"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                />
+                <span className="mx-2 align-self-center">-</span>
+                <input
+                    type="date"
+                    className="form-control w-25 me-2"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                />
+                <button onClick={filterOrdersByDate} className="btn btn-secondary">Tìm</button>
             </div>
 
             <table className="table table-bordered">
@@ -55,33 +96,34 @@ const Book = () => {
                     <th>Ngày mua</th>
                     <th>Số lượng</th>
                     <th>Tổng tiền</th>
-                    <th>Action</th>
+                    <th className="text-center">Action</th>
 
                 </tr>
                 </thead>
                 <tbody className="align-middle">
-                {orders.map((order, index) => {
+                {sortedOrders.map((order, index) => {
                     const product = getProductById(order.product_id);
                     return (
-                    <tr key={order.id}>
-                        <td>{index + 1}</td>
-                        <td>{order.code}</td>
-                        <td>{product.name}</td>
-                        <td>{product.price}</td>
-                        <td>{product.type}</td>
-                        <td>{order.boughtDate}</td>
-                        <td>{order.quantity}</td>
-                        <td>{order.total}</td>
-                        <td>
-                            <Link
-                                to={`/edit/${order.id}`}
-                                className="btn btn-primary me-2 btn-action w-50"
-                            >
-                                Sửa
-                            </Link>
-                        </td>
-                    </tr>
-                )})}
+                        <tr key={order.id}>
+                            <td>{index + 1}</td>
+                            <td>{order.code}</td>
+                            <td>{product.name}</td>
+                            <td>{product.price}</td>
+                            <td>{product.type}</td>
+                            <td>{formatDate(order.boughtDate)}</td>
+                            <td>{order.quantity}</td>
+                            <td>{order.total}</td>
+                            <td className="text-center">
+                                <Link
+                                    to={`/edit/${order.id}`}
+                                    className="btn btn-primary btn-action"
+                                >
+                                    Sửa
+                                </Link>
+                            </td>
+                        </tr>
+                    )
+                })}
                 </tbody>
             </table>
         </div>
