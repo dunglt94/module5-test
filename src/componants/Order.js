@@ -58,28 +58,29 @@ const Book = () => {
         }).format(new Date(dateString));
     };
 
-    const filterOrdersByDate = () => {
-        const start = startDate ? new Date(startDate) : null;
-        const end = endDate ? new Date(endDate) : null;
+    const filterOrders = () => {
+        let filtered = [...orders];
 
-        const filteredByDate = orders.filter(order => {
-            const orderDate = new Date(order.boughtDate);
-            return (!start || orderDate >= start) && (!end || orderDate <= end);
-        });
+        if (startDate && endDate) {
+            const start = startDate ? new Date(startDate) : null;
+            const end = endDate ? new Date(endDate) : null;
 
-        setOrders(filteredByDate);
+            filtered = filtered.filter(order => {
+                const orderDate = new Date(order.boughtDate);
+                return (!start || orderDate >= start) && (!end || orderDate <= end);
+            });
+
+            setDisplayedOrders(filtered);
+        }
+
+        if (productId !== "none") {
+            filtered = filtered.filter(order => order.productId === Number(productId));
+            setDisplayedOrders(filtered);
+        }
     };
 
-    const filterOrdersByProduct = (productId) => {
-        if (productId === "none") {
 
-        } else {
-            const filteredOrders = orders.filter(order => order.productId === Number(productId));
-            setDisplayedOrders(filteredOrders);
-        }
-    }
-
-    const filterOrdersByTotal = (limit) => {
+    const SortOrdersByTotal = (limit) => {
         if (limit === "all") {
             setDisplayedOrders(sortedOrdersByTotal);
         } else {
@@ -89,7 +90,7 @@ const Book = () => {
     }
 
     const resetList = () => {
-        setDisplayedOrders(sortedOrdersByPrice)
+        setDisplayedOrders(sortedOrdersByPrice);
     }
 
     return (
@@ -115,7 +116,7 @@ const Book = () => {
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
                 />
-                <button onClick={filterOrdersByDate} className="btn btn-secondary">Tìm</button>
+                <button onClick={filterOrders} className="btn btn-secondary">Tìm</button>
             </div>
 
             <div className="mb-3 d-flex me-1">
@@ -129,7 +130,7 @@ const Book = () => {
                     name="productId"
                     id="productId"
                     className="col-4 form-control w-auto me-1"
-                    onChange={(e) => setProductId(Number(e.target.value))}
+                    onChange={(e) => setProductId(e.target.value)}
                 >
                     <option value="none">Chọn sản phẩm</option>
                     {products.map((product) => (
@@ -140,7 +141,7 @@ const Book = () => {
                 </select>
                 <button
                     className="btn btn-secondary"
-                    onClick={() => filterOrdersByProduct(productId)}
+                    onClick={filterOrders}
                 >
                     Tìm
                 </button>
@@ -159,7 +160,7 @@ const Book = () => {
                 <span> đơn hàng có tổng số tiền bán cao nhất. </span>
                 <button
                     className="btn btn-secondary"
-                    onClick={() => filterOrdersByTotal(limit)}
+                    onClick={() => SortOrdersByTotal(limit)}
                 >
                     Xem
                 </button>
