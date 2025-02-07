@@ -1,35 +1,25 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
-import {ORDER_API_URL, PRODUCT_API_URL} from "../constants/mock-api";
+import {ORDER_API_URL} from "../constants/mock-api";
 import {Link} from "react-router-dom";
 
 const Book = () => {
     const [orders, setOrders] = useState([]);
-    const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState(false);
+
+    const [displayedOrders, setdisplayedOrders] = useState([]);
+
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
-
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await axios.get(PRODUCT_API_URL);
-                setProducts(response.data);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
-        fetchProducts().then();
-    }, []);
-
-    const getProductById = (id) => {
-        return products.find(product => product.id === id);
-    };
+    const [limit, setLimit] = useState("10");
 
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const response = await axios.get(ORDER_API_URL);
+                const response = await axios.get(`${ORDER_API_URL}?_expand=product`);
                 setOrders(response.data);
+                setdisplayedOrders(response.data);
+                console.log(response.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -37,11 +27,14 @@ const Book = () => {
         fetchOrders().then();
     }, []);
 
-    const sortedOrders = [...orders].sort((a, b) => {
-        const productA = getProductById(a.productId);
-        const productB = getProductById(b.productId);
-        return (productA?.price || 0) - (productB?.price || 0);
-    });
+    useEffect(() => {
+        const sortedOrdersByPrice = [...orders].sort((a, b) => (a.product?.price || 0) - (b.product?.price || 0));
+        if (orders) {
+            setdisplayedOrders(sortedOrdersByPrice);
+        }
+    }, [orders]);
+
+    const sortedOrdersByTotal = [...orders].sort((a, b) => b.total - a.total);
 
     const formatDate = (dateString) => {
         return new Intl.DateTimeFormat("vi-VN", {
@@ -55,13 +48,22 @@ const Book = () => {
         const start = startDate ? new Date(startDate) : null;
         const end = endDate ? new Date(endDate) : null;
 
-        const filtered = orders.filter(order => {
+        const filteredByDate = orders.filter(order => {
             const orderDate = new Date(order.boughtDate);
             return (!start || orderDate >= start) && (!end || orderDate <= end);
         });
 
-        setOrders(filtered);
+        setOrders(filteredByDate);
     };
+
+    const filterOrdersByTotal = (limit) => {
+        if (limit === "all") {
+            setdisplayedOrders(sortedOrdersByTotal);
+        } else {
+            // Chuyển limit sang kiểu number để dùng với slice
+            setdisplayedOrders(sortedOrdersByTotal.slice(0, Number(limit)));
+        }
+    }
 
     return (
         <div className="container mt-4">
@@ -89,6 +91,25 @@ const Book = () => {
                 <button onClick={filterOrdersByDate} className="btn btn-secondary">Tìm</button>
             </div>
 
+            <div className="mb-3">
+                <label htmlFor="limitSelect" className="me-1">Hiển thị</label>
+                <select
+                    id="limitSelect"
+                    onChange={(e) => setLimit(e.target.value)}
+                >
+                    <option value="10">10</option>
+                    <option value="5">5</option>
+                    <option value="all">Tất cả</option>
+                </select>
+                <span> đơn hàng có tổng số tiền bán cao nhất. </span>
+                <button
+                    className="btn btn-secondary"
+                    onClick={() => filterOrdersByTotal(limit)}
+                >
+                    Xem
+                </button>
+            </div>
+
             <table className="table table-bordered">
                 <thead>
                 <tr>
@@ -105,8 +126,8 @@ const Book = () => {
                 </tr>
                 </thead>
                 <tbody className="align-middle">
-                {sortedOrders.map((order, index) => {
-                    const product = getProductById(order.productId);
+                {displayedOrders.map((order, index) => {
+                    const {product} = order;
                     return (
                         <tr key={order.id}>
                             <td>{index + 1}</td>
