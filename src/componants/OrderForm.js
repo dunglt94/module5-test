@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Formik} from "formik";
 import axios from "axios";
-import {ORDER_API_URL, PRODUCT_API_URL} from "../constants/mock-api";
+import {ORDER_API_URL, PRODUCT_API_URL,} from "../constants/mock-api";
 import {useNavigate} from "react-router-dom";
 
 
@@ -11,13 +11,15 @@ const OrderForm = () => {
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
-        axios
-            .get(PRODUCT_API_URL)
-            .then((res) => {
-                setProducts(res.data);
-                console.log(res.data)
-            })
-            .catch((error) => console.error(error));
+        const fetchProducts = async () => {
+            try {
+                const response = await axios.get(PRODUCT_API_URL);
+                setProducts(response.data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+        fetchProducts().then();
     }, []);
 
     const handleValidate = () => {
@@ -27,8 +29,8 @@ const OrderForm = () => {
             errors.code = "Không được để trống";
         }
 
-        if (!order.product_id) {
-            errors.product_id = "Không được để trống";
+        if (!order.productId) {
+            errors.productId = "Không được để trống";
         }
 
         if (!order.boughtDate) {
@@ -48,7 +50,7 @@ const OrderForm = () => {
             errors.quantity = "Số lượng phải lớn hơn 0";
         }
 
-        if (Number.isInteger(order.quantity)) {
+        if (!Number.isInteger(order.quantity)) {
             errors.quantity = "Số lượng phải là số nguyên";
         }
 
@@ -56,8 +58,8 @@ const OrderForm = () => {
     }
 
     useEffect(() => {
-        if (order.product_id && order.quantity) {
-            const selectedProduct = products.find(product => product.id === order.product_id);
+        if (order.productId && order.quantity) {
+            const selectedProduct = products.find(product => product.id === order.productId);
             if (selectedProduct) {
                 setOrder(prevOrder => ({
                     ...prevOrder,
@@ -65,26 +67,27 @@ const OrderForm = () => {
                 }));
             }
         }
-    }, [order.product_id, order.quantity, products]);
+    }, [order.productId, order.quantity, products]);
 
     const handleChange = (e) => {
         setOrder({
-            ...order, [e.target.name]: e.target.name === "product_id" ? parseInt(e.target.value, 10) : e.target.value,
+            ...order, [e.target.name]: e.target.name === "productId" || e.target.name === "quantity"
+                ? parseInt(e.target.value)
+                : e.target.value,
         });
         console.log(order);
     }
 
 
     const handleSubmit = () => {
-        const fetchProducts = async () => {
-            try {
-                const response = await axios.get(ORDER_API_URL);
-                setProducts(response.data);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
-        fetchProducts().then();
+        axios
+            .post(ORDER_API_URL, order)
+            .then((res) => {
+                alert(`Order "${res.data.code}" added successfully! Status ${res.status}!`);
+                console.log(res.data)
+                navigate("/");
+            })
+            .catch((error) => console.error(error));
     };
 
     return (
@@ -110,10 +113,10 @@ const OrderForm = () => {
                         </div>
 
                         <div className="row mb-3">
-                            <label htmlFor="product_id" className="col-2">Sản phẩm</label>
+                            <label htmlFor="productId" className="col-2">Sản phẩm</label>
                             <select
-                                name="product_id"
-                                id="product_id"
+                                name="productId"
+                                id="productId"
                                 className="col-4 form-control w-auto"
                                 onChange={handleChange}
                             >
@@ -124,7 +127,7 @@ const OrderForm = () => {
                                     </option>
                                 ))}
                             </select>
-                            <p className={"error text-danger"}>{errors.product_id}</p>
+                            <p className={"error text-danger"}>{errors.productId}</p>
                         </div>
 
                         <div className="row mb-3">
@@ -154,7 +157,7 @@ const OrderForm = () => {
                         <label htmlFor="total" className="col-2">Tổng giá trị</label>
                             <div className="col-4 p-0">
                                 <input
-                                    type="text"
+                                    type="number"
                                     name="total"
                                     id="total"
                                     className="form-control w-auto"

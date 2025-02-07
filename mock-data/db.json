@@ -26,7 +26,7 @@
       "boughtDate": "2025-02-06",
       "total": 1000,
       "quantity": 10,
-      "product_id": 1
+      "productId": 1
     },
     {
       "id": 2,
@@ -34,7 +34,7 @@
       "boughtDate": "2025-02-06",
       "total": 1200,
       "quantity": 6,
-      "product_id": 2
+      "productId": 2
     },
     {
       "id": 3,
@@ -42,31 +42,71 @@
       "boughtDate": "2025-02-06",
       "total": 1600,
       "quantity": 20,
-      "product_id": 3
+      "productId": 3
     },
     {
       "total": 1100,
       "code": "222",
-      "product_id": 1,
+      "productId": 1,
       "boughtDate": "2025-02-06",
-      "quantity": "11",
+      "quantity": 11,
       "id": 4
     },
     {
       "total": 880,
       "code": "204",
-      "product_id": 3,
+      "productId": 3,
       "boughtDate": "2025-02-03",
-      "quantity": "11",
+      "quantity": 11,
       "id": 5
     },
     {
       "total": 1100,
       "code": "222",
-      "product_id": 1,
+      "productId": 1,
       "boughtDate": "2025-02-06",
-      "quantity": "11",
+      "quantity": 11,
       "id": 6
+    },
+    {
+      "total": 2200,
+      "code": "214",
+      "productId": 1,
+      "boughtDate": "2025-02-07",
+      "quantity": 22,
+      "id": 7
+    },
+    {
+      "total": 4000,
+      "code": "234",
+      "productId": 3,
+      "quantity": 50,
+      "boughtDate": "2025-02-07",
+      "id": 8
+    },
+    {
+      "total": 500,
+      "code": "245",
+      "productId": 1,
+      "quantity": 5,
+      "boughtDate": "2025-02-07",
+      "id": 9
+    },
+    {
+      "total": 5000,
+      "code": "211",
+      "productId": 2,
+      "quantity": 25,
+      "boughtDate": "2025-02-07",
+      "id": 10
+    },
+    {
+      "total": 8800,
+      "productId": 3,
+      "code": "2999",
+      "boughtDate": "2025-02-07",
+      "quantity": 110,
+      "id": 11
     }
   ]
 }

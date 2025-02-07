@@ -38,8 +38,8 @@ const Book = () => {
     }, []);
 
     const sortedOrders = [...orders].sort((a, b) => {
-        const productA = getProductById(a.product_id);
-        const productB = getProductById(b.product_id);
+        const productA = getProductById(a.productId);
+        const productB = getProductById(b.productId);
         return (productA?.price || 0) - (productB?.price || 0);
     });
 
@@ -106,7 +106,7 @@ const Book = () => {
                 </thead>
                 <tbody className="align-middle">
                 {sortedOrders.map((order, index) => {
-                    const product = getProductById(order.product_id);
+                    const product = getProductById(order.productId);
                     return (
                         <tr key={order.id}>
                             <td>{index + 1}</td>
