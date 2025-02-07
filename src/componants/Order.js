@@ -1,24 +1,26 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
-import {ORDER_API_URL} from "../constants/mock-api";
+import {ORDER_API_URL, PRODUCT_API_URL} from "../constants/mock-api";
 import {Link} from "react-router-dom";
 
 const Book = () => {
     const [orders, setOrders] = useState([]);
-    const [products, setProducts] = useState(false);
+    const [products, setProducts] = useState([]);
 
-    const [displayedOrders, setdisplayedOrders] = useState([]);
+    const [displayedOrders, setDisplayedOrders] = useState([]);
 
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [limit, setLimit] = useState("10");
+    const [productId, setProductId] = useState("none");
+
 
     useEffect(() => {
         const fetchOrders = async () => {
             try {
                 const response = await axios.get(`${ORDER_API_URL}?_expand=product`);
                 setOrders(response.data);
-                setdisplayedOrders(response.data);
+                setDisplayedOrders(response.data);
                 console.log(response.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -28,9 +30,21 @@ const Book = () => {
     }, []);
 
     useEffect(() => {
-        const sortedOrdersByPrice = [...orders].sort((a, b) => (a.product?.price || 0) - (b.product?.price || 0));
+        const fetchProducts = async () => {
+            try {
+                const response = await axios.get(PRODUCT_API_URL);
+                setProducts(response.data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+        fetchProducts().then();
+    }, []);
+
+    const sortedOrdersByPrice = [...orders].sort((a, b) => (a.product?.price || 0) - (b.product?.price || 0));
+    useEffect(() => {
         if (orders) {
-            setdisplayedOrders(sortedOrdersByPrice);
+            setDisplayedOrders(sortedOrdersByPrice);
         }
     }, [orders]);
 
@@ -56,13 +70,26 @@ const Book = () => {
         setOrders(filteredByDate);
     };
 
+    const filterOrdersByProduct = (productId) => {
+        if (productId === "none") {
+
+        } else {
+            const filteredOrders = orders.filter(order => order.productId === Number(productId));
+            setDisplayedOrders(filteredOrders);
+        }
+    }
+
     const filterOrdersByTotal = (limit) => {
         if (limit === "all") {
-            setdisplayedOrders(sortedOrdersByTotal);
+            setDisplayedOrders(sortedOrdersByTotal);
         } else {
             // Chuyển limit sang kiểu number để dùng với slice
-            setdisplayedOrders(sortedOrdersByTotal.slice(0, Number(limit)));
+            setDisplayedOrders(sortedOrdersByTotal.slice(0, Number(limit)));
         }
+    }
+
+    const resetList = () => {
+        setDisplayedOrders(sortedOrdersByPrice)
     }
 
     return (
@@ -91,6 +118,34 @@ const Book = () => {
                 <button onClick={filterOrdersByDate} className="btn btn-secondary">Tìm</button>
             </div>
 
+            <div className="mb-3 d-flex me-1">
+                <label
+                    htmlFor="limitSelect"
+                    className="me-1 align-self-center"
+                >
+                    Tìm đơn hàng theo sản phẩm
+                </label>
+                <select
+                    name="productId"
+                    id="productId"
+                    className="col-4 form-control w-auto me-1"
+                    onChange={(e) => setProductId(Number(e.target.value))}
+                >
+                    <option value="none">Chọn sản phẩm</option>
+                    {products.map((product) => (
+                        <option key={product.id} value={parseInt(product.id)}>
+                            {product.name}
+                        </option>
+                    ))}
+                </select>
+                <button
+                    className="btn btn-secondary"
+                    onClick={() => filterOrdersByProduct(productId)}
+                >
+                    Tìm
+                </button>
+            </div>
+
             <div className="mb-3">
                 <label htmlFor="limitSelect" className="me-1">Hiển thị</label>
                 <select
@@ -108,6 +163,10 @@ const Book = () => {
                 >
                     Xem
                 </button>
+            </div>
+
+            <div className="mb-3">
+                <button onClick={resetList} className="btn btn-primary">Reset</button>
             </div>
 
             <table className="table table-bordered">
